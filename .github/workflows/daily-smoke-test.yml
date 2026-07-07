@@ -1,0 +1,25 @@
+name: Daily Smoke Test
+
+on:
+  schedule:
+    - cron: '0 1 * * *'   # runs every day at 1:00 AM UTC
+  workflow_dispatch:        # lets you trigger it manually too, from the Actions tab
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pytest-playwright
+          playwright install --with-deps
+
+      - name: Run daily smoke test
+        run: pytest tests/test_daily_smoke.py -v
